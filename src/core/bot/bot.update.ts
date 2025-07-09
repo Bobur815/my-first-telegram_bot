@@ -1,4 +1,4 @@
-import { Ctx, On, Start, Update } from 'nestjs-telegraf';
+import { Ctx, Hears, On, Start, Update } from 'nestjs-telegraf';
 import { contactReply } from 'src/common/contact.send';
 import { PrismaService } from 'src/common/database/prisma.service';
 import { userState } from 'src/common/userstate';
@@ -14,12 +14,41 @@ export class BotUpdate {
             where: {telegramId:ctx.from?.id}
         })
         if(existingUser){
-            console.log(existingUser.state);
+            if(existingUser.state === 'menu'){
+                ctx.reply('Menu:', {
+                    reply_markup:{
+                    keyboard: [
+                            [
+                                {text:"Info"},
+                                {text:'Help'}
+                            ],
+                            [
+                                {text:'sertificate'}
+                            ]
+                        ],
+                        resize_keyboard:true,
+                        one_time_keyboard:true
+                    }
+                })
+                return
+            }
             
         }
         userState.set(ctx.from!.id, {step:'firstname',data:{}})
         ctx.reply(`Botimizga xush kelibsiz! 😊\nIsmingizni kiriting:`)
         
+    }
+
+    @Hears('Info')
+    async info(@Ctx() ctx: Context){
+        let user = await this.prisma.user.findUnique({
+            where:{
+                telegramId:ctx.from?.id
+            }
+        })
+
+        ctx.reply(`Ism:\t${user?.firstname}\nFamiliya:\t${user?.lastname}\nYosh:${user?.age}\nKontakt:${user?.contact}`)
+
     }
 
     @On('text')
@@ -90,7 +119,19 @@ export class BotUpdate {
             })
             console.log(newUser);
             
-            ctx.reply("✅ Ma'lumot saqlandi")
+            ctx.reply("✅ Ma'lumot saqlandi",{
+                reply_markup:{
+                    keyboard: [
+                        [
+                            {text:"Info"},
+                            {text:'Help'}
+                        ],
+                        [
+                            {text:'sertificate'}
+                        ]
+                    ]
+                }
+            })
         }
     }
 
