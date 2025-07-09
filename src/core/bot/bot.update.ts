@@ -47,8 +47,14 @@ export class BotUpdate {
             }
         })
 
-        ctx.reply(`Ism:\t${user?.firstname}\nFamiliya:\t${user?.lastname}\nYosh:${user?.age}\nKontakt:${user?.contact}`)
+        const html = `<pre>
+    😌 Ism      │ ${user?.firstname || ''}
+    😍 Familiya │ ${user?.lastname  || ''}
+    🥶 Yosh     │ ${user?.age       || ''}
+    ✅ Kontakt  │ ${user?.contact   || ''}
+        </pre>`;
 
+        await ctx.reply(html, { parse_mode: 'HTML' });
     }
 
     @On('text')
