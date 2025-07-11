@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BotUpdate } from './bot.update';
-import { PrismaService } from 'src/common/database/prisma.service';
 import { PrismaModule } from 'src/common/database/prisma.module';
-import { RegistrationModule } from './registration/registration.module';
+import { session } from 'telegraf';
+import { trackAll } from 'src/common/middleware/track.middleware';
 
 @Module({
   imports: [
@@ -14,10 +14,13 @@ import { RegistrationModule } from './registration/registration.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
         token: config.get<string>('BOT_TOKEN') as string,
+        middlewares: [ 
+          session(),
+          trackAll
+         ],
       }),
       inject: [ConfigService],
     }),
-    RegistrationModule,
   ],
   providers: [BotUpdate]
 })

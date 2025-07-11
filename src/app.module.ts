@@ -8,6 +8,7 @@ import { PrismaModule } from './common/database/prisma.module';
     ConfigModule.forRoot({
       isGlobal:true
     }),
-    BotModule, PrismaModule],
+    BotModule, PrismaModule
+  ],
 })
 export class AppModule {}

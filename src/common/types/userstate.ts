@@ -1,4 +1,4 @@
-type UserState = 'firstname' | 'lastname' | 'age' | 'contact'
+type UserState = 'subscription' | 'firstname' | 'lastname' | 'age' | 'contact'
 
 interface UserData {
     step:UserState,
